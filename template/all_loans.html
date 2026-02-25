@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loan Management | Shahi Ledger</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f1f5f9;
+            --card-bg: #ffffff;
+            --primary: #6366f1;
+            --given: #0ea5e9; 
+            --taken: #f59e0b; 
+            --received: #10b981; 
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .summary-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .stat-card {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--border);
+        }
+
+        .stat-card.given { border-left-color: var(--given); }
+        .stat-card.taken { border-left-color: var(--taken); }
+        .stat-card.received { border-left-color: var(--received); }
+
+        .stat-card p {
+            margin: 0;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .stat-card .amount {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-top: 5px;
+        }
+
+        .table-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            border: 1px solid var(--border);
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background: #f8fafc;
+            padding: 16px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            border-bottom: 1px solid var(--border);
+        }
+
+        td {
+            padding: 16px;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.95rem;
+        }
+
+        tr:last-child td { border-bottom: none; }
+
+        .badge {
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        .badge-given { background: #e0f2fe; color: #0369a1; }
+        .badge-taken { background: #fef3c7; color: #92400e; }
+
+        .person-name { font-weight: 600; color: var(--text-main); }
+        .date-text { color: var(--text-muted); font-size: 0.85rem; }
+
+        .header-flex {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-add {
+            background: var(--primary);
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-flex">
+        <h2 style="margin:0">Loan Ledger</h2>
+        <a href="{% url 'add_loan' %}" class="btn-add">+ New Loan Entry</a>
+    </div>
+
+    <div class="summary-row">
+        <div class="stat-card given">
+            <p>Total Given</p>
+            <div class="amount" style="color: var(--given)">₹ {{ total_given }}</div>
+        </div>
+        <div class="stat-card taken">
+            <p>Total Taken</p>
+            <div class="amount" style="color: var(--taken)">₹ {{ total_taken }}</div>
+        </div>
+        <div class="stat-card received">
+            <p>Total Received</p>
+            <div class="amount" style="color: var(--received)">₹ {{ total_received }}</div>
+        </div>
+    </div>
+
+    <div class="table-card">
+        <table>
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Person</th>
+                    <th>Type</th>
+                    <th>Description</th>
+                    <th style="text-align: right;">Amount</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for loan in loans %}
+                <tr>
+                    <td class="date-text">{{ loan.date }}</td>
+                    <td class="person-name">{{ loan.person.name }}</td>
+                    <td>
+                        <span class="badge {% if 'Given' in loan.get_type_display %}badge-given{% else %}badge-taken{% endif %}">
+                            {{ loan.get_type_display }}
+                        </span>
+                    </td>
+                    <td style="color: var(--text-muted); font-size: 0.9rem;">{{ loan.description|default:"-" }}</td>
+                    <td style="text-align: right; font-weight: 700;">₹ {{ loan.amount }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-muted);">
+                        No loan records found.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
