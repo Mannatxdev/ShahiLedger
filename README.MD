@@ -131,4 +131,5 @@ Deployment (Railway / Render)
 👨‍💻 Author
 
 Mannat Kumar
-GitHub: https://github.com/Mannatxdev
+GitHub: https://github.com/Mannatxdev.
+
